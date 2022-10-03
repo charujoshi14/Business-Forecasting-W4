@@ -1,0 +1,65 @@
+library(fpp)
+library(fpp2)
+library(TTR)
+#1 Choose data from data set fpp
+
+data = fpp::cafe
+#2 Describe
+# Data is Quarterly expenditure on eating out and take away food in Australia from 1982 to 2010
+#We can observe that there is a trend in the time series and it is constantly increasing through the quarters.
+
+
+attributes(data)
+plot(data)
+Acf(data)
+
+#take Mean of all available history
+
+mean_forecast <- meanf(data,5)
+plot(mean_forecast)
+
+# Naive
+naive_forecast <- naive(data,5)
+plot(naive_forecast)
+
+# Random Walk
+rwf_forecast <- rwf(data,5)
+rwf_forecast <- rwf(data,5, drift=TRUE)
+
+# Seasonal Naive
+snaive_forecast <- snaive(data,5)
+
+# Moving Averages
+
+MA5_forecast <- ma(data,order=5)
+MA9_forecast <- ma(data,order=9)
+
+# plot all in a single chart
+plot(mean_forecast)
+lines(naive_forecast$mean,col="red")
+lines(rwf_forecast$mean,col="green")
+lines(snaive_forecast$mean,col="black")
+lines(MA5_forecast,col="Pink")
+lines(MA9_forecast,col="Blue")
+# what other attributes are there?
+attributes(naive_forecast)
+
+# Decomposition
+ets_forecast <- ets(data)
+plot(ets_forecast)
+attributes(ets_forecast)
+ets_forecast$mse
+# HoltWinters
+HW_forecast <- HoltWinters(data)
+plot(HW_forecast)
+SSE_Simple <- HoltWinters(data,beta=FALSE,gamma=FALSE)
+attributes(SSE_Simple)
+plot(SSE_Simple)
+SSE_Simple$SSE
+head(SSE_Simple$fitted)
+
+#Forecast
+forecast_ets_1 <- forecast.ets(ets_forecast, h=5)
+plot(forecast_ets_1)
+forecast_ets_2 <- forecast(ets_forecast, h=5)
+plot(forecast_ets_2)
